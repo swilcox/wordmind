@@ -17,6 +17,11 @@ python wordmind_cli.py
 python wordmind_cli.py --auto true --solution drink --speed 50
 ```
 
+## To Run Tests
+
+```sh
+pytest
+```
 
 ## Things to do still
 
