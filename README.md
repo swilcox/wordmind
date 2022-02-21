@@ -8,8 +8,6 @@ a silly wordle knockoff for the command-line
 
 ## how to run
 
-Once you're inside a virtualenv with the necessary requirements:
-
 ### to play normally with default options
 
 ```sh
