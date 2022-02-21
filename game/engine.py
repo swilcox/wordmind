@@ -78,20 +78,6 @@ class Game:
             return True
         return False
 
-    @property
-    def eliminated_letters(self) -> list[str]:
-        f_letters = set()
-        e_letters = set()
-        for hint in self._hints:
-            for hl in hint.hint_letters:
-                if hl.hint_type == HintType.NOT_IN_WORD:
-                    e_letters.add(hl.letter)
-                else:
-                    f_letters.add(hl.letter)
-        elim_list = list(e_letters - f_letters)
-        elim_list.sort()
-        return elim_list
-
     def _find_letters(self, hint_type: HintType) -> list[str]:
         f_letters = set()
         for hint in self._hints:
