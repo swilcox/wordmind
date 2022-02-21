@@ -1,151 +1,194 @@
-import random
-from enum import Enum
-from dataclasses import dataclass
+import argparse
+import os
+import string
+import time
+
+from colorama import Fore, Back, Style
+from blessed import Terminal
+
+from game.engine import Game, GameStatus, HintType, Hint
+from game.guesser import Guesser
 
 
-class HintType(Enum):
-    NOT_IN_WORD = 0
-    WRONG_SPOT = 1
-    MATCH = 2
+def _read_in_file(file_name) -> list[str]:
+    with open(os.path.join('data', file_name), "rt") as f:
+        return [line.strip() for line in f.readlines()]
 
 
-@dataclass
-class HintLetter:
-    letter: str
-    hint_type: HintType
+HINT_MAP = {
+    HintType.MATCH: Fore.BLACK + Back.GREEN,
+    HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX + Back.BLACK,
+    HintType.WRONG_SPOT: Fore.BLACK + Back.YELLOW,
+}
 
 
-@dataclass
-class Hint:
-    hint_letters: list[HintLetter]
+class GameScreen:
+    def __init__(self, term: Terminal, game: Game, color_blind=False, speed=500):
+        self.term = term
+        self.color_blind = color_blind
+        self.game = game
+        self.speed = speed
+        self._current_guess = 0
 
-    def accounted_for(self, letter):
-        return sum(
-            1
-            for hl in self.hint_letters
-            if hl.letter == letter and hl.hint_type != HintType.NOT_IN_WORD
-        )
+    def display_title(self):
+        print("Welcome to WordMind!")
+
+    def display_guesses(self):
+        with self.term.location(0, 2):
+            for y in range(self.game.max_guesses):
+                for x in range(self.game.word_length):
+                    print("\u2395", end="")
+                print()
+
+    def display_keyboard(self):
+        with self.term.location(0, 2 + self.game.max_guesses + 1):
+            rows = [
+                "qwertyuiop",
+                "asdfghjkl",
+                "zxcvbnm",
+            ]
+            for y, row in enumerate(rows):
+                print(" " * y, end="")
+                for c in row:
+                    if c in self.game.eliminated_letters:
+                        print(Fore.LIGHTBLACK_EX + c + " " + Style.RESET_ALL, end="")
+                    elif c in self.game.wrong_place_letters:
+                        print(Fore.YELLOW + c + " " + Style.RESET_ALL, end="")
+                    elif c in self.game.match_letters:
+                        print(Fore.GREEN + c + " " + Style.RESET_ALL, end="")
+                    else:
+                        print(c + " ", end="")
+                print()
+
+    def update_status(self, status: str):
+        with self.term.location(0, self.game.max_guesses + 7):
+            print(self.term.clear_eol)
+        with self.term.location(0, self.game.max_guesses + 7):
+            print(Fore.RED + status + Style.RESET_ALL)
+
+    def get_input(self) -> str:
+        current_number = len(self.game.hints)
+        length = self.game.word_length
+        with self.term.cbreak():
+            result = ""
+            done = False
+            while not done:
+                val = self.term.inkey()
+                if val.is_sequence:
+                    if val.name == "KEY_BACKSPACE" and len(result):
+                        result = result[:-1]
+                    elif val.name == "KEY_ENTER" and len(result) == length:
+                        done = True
+                elif val in string.ascii_lowercase and len(result) < length:
+                    result += val
+                for i in range(self.game.word_length):
+                    with self.term.location((i * 1) + 0, 2 + (current_number * 1)):
+                        print(result[i] if i < len(result) else "\u2395")
+                self.update_status("")
+        return result
+
+    def reveal_hint(self):
+        hint = self.game.hints[-1].hint_letters
+        for i in range(self.game.word_length):
+            with self.term.location((i * 1) + 0, 1 + (len(self.game.hints) * 1)):
+                time.sleep(self.speed / 1000)
+                print(HINT_MAP[hint[i].hint_type] + hint[i].letter + Style.RESET_ALL)
 
 
-class GameStatus(Enum):
-    IN_PROGRESS = 0
-    COMPLETE = 1
+def main():
+    parser = argparse.ArgumentParser(description="WordMind Game")
+    parser.add_argument(
+        "--word_list",
+        dest="word_file",
+        default="all_words.txt",
+        help="list of possible guess words",
+    )
+    parser.add_argument(
+        "--answer_words",
+        dest="answer_file",
+        default="words.txt",
+        help="list of words the answer can come from",
+    )
+    parser.add_argument(
+        "--solution",
+        dest="solution",
+        default="",
+        help="force the answer to a particular word",
+    )
+    parser.add_argument(
+        "--speed",
+        dest="speed",
+        default=500,
+        type=int,
+        help="reveal speed in ms per letter",
+    )
+    parser.add_argument(
+        "--word_length",
+        dest="word_length",
+        default=5,
+        help="number of letters in each word",
+    )
+    parser.add_argument(
+        "--max_guesses", dest="max_guesses", default=6, help="maximum number of guesses"
+    )
+    parser.add_argument(
+        "--color_blind",
+        dest="color_blind",
+        default=False,
+        help="increase contrast for colors",
+    )
+    parser.add_argument(
+        "--hard",
+        dest="hard_mode",
+        default=False,
+        help="hard mode - strict guess enforcement",
+    )
+    parser.add_argument(
+        "--auto",
+        default=False,
+        dest="auto",
+    )
+    args = parser.parse_args()
+    word_list = _read_in_file(args.word_file)
+    answer_list = _read_in_file(args.answer_file)
+    game = Game(
+        word_list=word_list,
+        solution_list=answer_list,
+        max_guesses=args.max_guesses,
+        word_length=args.word_length,
+        hard_mode=args.hard_mode,
+        word=args.solution,
+    )
+    if args.auto:
+        guesser = Guesser(game, word_list)
+    term = Terminal()
+    with term.fullscreen(), term.hidden_cursor():
+        screen = GameScreen(term, game, speed=args.speed)
+        screen.display_title()
+        screen.display_guesses()
 
-
-class Game:
-    def __init__(
-        self,
-        word_list: list[str],
-        *,
-        solution_list: list[str] = None,
-        max_guesses=6,
-        word_length=5,
-        hard_mode=False,
-        word=""
-    ):
-        self.word_length = word_length
-        self.max_guesses = max_guesses
-        self.hard_mode = hard_mode
-        self._guesses = []
-        self._hints = []
-        self._word_list = [word for word in word_list if len(word) == self.word_length]
-        self._solution_list = (
-            [word for word in solution_list if len(word)]
-            if solution_list
-            else self._word_list
-        )
-        self._word = self._choose_word() if not word else word
-        self.status = GameStatus.IN_PROGRESS
-
-    def _choose_word(self) -> str:
-        return random.choice(self._solution_list)
-
-    def _update_game_status(self):
-        if self._guesses[-1] == self._word or len(self._guesses) >= self.max_guesses:
-            self.status = GameStatus.COMPLETE
-
-    @property
-    def hints(self) -> list[Hint]:
-        return self._hints
-
-    @property
-    def guesses(self) -> list[str]:
-        return self._guesses
-
-    @property
-    def won(self) -> bool:
-        if self._guesses and self._guesses[-1] == self._word:
-            return True
-        return False
-
-    @property
-    def eliminated_letters(self) -> list[str]:
-        f_letters = set()
-        e_letters = set()
-        for hint in self._hints:
-            for hl in hint.hint_letters:
-                if hl.hint_type == HintType.NOT_IN_WORD:
-                    e_letters.add(hl.letter)
-                else:
-                    f_letters.add(hl.letter)
-        elim_list = list(e_letters - f_letters)
-        elim_list.sort()
-        return elim_list
-
-    def _find_letters(self, hint_type: HintType) -> list[str]:
-        f_letters = set()
-        for hint in self._hints:
-            for hl in hint.hint_letters:
-                if hl.hint_type == hint_type:
-                    f_letters.add(hl.letter)
-        found_list = list(f_letters)
-        found_list.sort()
-        return found_list
-
-    @property
-    def eliminated_letters(self) -> list[str]:
-        e_list = list(
-            set(self._find_letters(HintType.NOT_IN_WORD))
-            - set(self._find_letters(HintType.MATCH))
-            - set(self._find_letters(HintType.WRONG_SPOT))
-        )
-        e_list.sort()
-        return e_list
-
-    @property
-    def match_letters(self) -> list[str]:
-        return self._find_letters(HintType.MATCH)
-
-    @property
-    def wrong_place_letters(self) -> list[str]:
-        return self._find_letters(HintType.WRONG_SPOT)
-
-    def submit_guess(self, guess: str) -> bool:
-        if (
-            guess not in self._word_list
-            or len(self._guesses) >= self.max_guesses
-            or self.status != GameStatus.IN_PROGRESS
-        ):
-            return False
-        self._guesses.append(guess)
-        hint_letters = []
-        for i, letter in enumerate(guess):
-            if letter == self._word[i]:
-                hint_letters.append(HintLetter(letter=letter, hint_type=HintType.MATCH))
+        while game.status == GameStatus.IN_PROGRESS:
+            screen.display_keyboard()
+            if args.auto:
+                guess = guesser.compute_guess()
             else:
-                # initially mark all non-matches as not_in_word
-                hint_letters.append(
-                    HintLetter(letter=letter, hint_type=HintType.NOT_IN_WORD)
-                )
-        # loop back thru and identify mis-matches as appropriate
-        hint = Hint(hint_letters)
-        for i, letter in enumerate(guess):
-            if (
-                letter != self._word[i] and letter in self._word
-            ):  # is the letter in the word but not in the right spot
-                if hint.accounted_for(letter) < self._word.count(letter):
-                    # only show as wrong_spot if that letter isn't already accounted for somehow
-                    hint.hint_letters[i].hint_type = HintType.WRONG_SPOT
-        self._hints.append(hint)
-        self._update_game_status()
-        return True
+                guess = screen.get_input()
+            if guess:
+                if not game.submit_guess(guess):
+                    screen.update_status(
+                        f"invalid guess, {guess} is not a word I know!"
+                    )
+                else:
+                    screen.update_status("")
+                    screen.reveal_hint()
+
+        if game.won:
+            screen.update_status("You Win!")
+        else:
+            screen.update_status(f"You Lose!\n word was: {game._word}")
+        with term.cbreak():
+            _ = term.inkey()
+
+
+if __name__ == "__main__":
+    main()
