@@ -1,5 +1,5 @@
 import random
-from wordmind import Game, GameStatus, Hint, HintLetter, HintType
+from game.engine import Game, GameStatus, Hint, HintLetter, HintType
 
 
 def test_game_init():

@@ -4,7 +4,7 @@ import re
 import sys
 
 
-from wordmind import Game, GameStatus, HintType
+from game.engine import Game, GameStatus, HintType
 
 
 class Guesser:
