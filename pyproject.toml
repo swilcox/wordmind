@@ -1,0 +1,24 @@
+[project]
+name = "wordmind"
+version = "0.2"
+description = "a silly wordle knockoff for the command-line"
+authors = [
+    {name = "Steven Wilcox", email = "steven@wilcoxzone.com"},
+]
+dependencies = ["colorama", "blessed"]
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+[project.urls]
+homepage = "https://github.com/swilcox/wordmind"
+
+[tool]
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "black","pytest","ipython"
+]
+
+[build-system]
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
