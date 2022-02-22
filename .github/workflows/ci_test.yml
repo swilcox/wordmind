@@ -21,5 +21,6 @@ jobs:
     - name: Install project dependencies
       run: pdm install
     - name: Test with pytest
-      run: pdm run pytest
-      run: pdm run pytest --cov-branch --cov-report term-missing:skip-covered --cov=game tests/ 
+      run: |
+        pdm run pytest
+        pdm run pytest --cov-branch --cov-report term-missing:skip-covered --cov=game tests/ 
