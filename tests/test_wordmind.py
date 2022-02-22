@@ -94,3 +94,25 @@ def test_game_status_changes_win():
     assert game.status == GameStatus.COMPLETE
     assert game.won == True
     assert game.submit_guess("think") == False
+
+
+def test_game_letter_status():
+    random.seed(1)
+    word_list = ["think", "point", "sleep"]
+    game = Game(word_list)
+    assert game._word == "think"
+    assert game.submit_guess("point") == True
+    assert game.eliminated_letters == ["o", "p"]
+    assert game.match_letters == ["i", "n"]
+    assert game.wrong_place_letters == ["t"]
+
+
+def test_guesses_and_hints():
+    random.seed(1)
+    word_list = ["think", "point", "sleep"]
+    game = Game(word_list)
+    assert game._word == "think"
+    assert game.submit_guess("point") == True
+    assert game.guesses == ["point"]
+    assert len(game.hints) == 1
+
