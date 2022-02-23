@@ -21,9 +21,6 @@ jobs:
       run: pdm install
     - name: Report test coverage
       run: |
-        pdm run pytest --cov-branch --cov-report xml --cov=game tests/
+        pdm run pytest --cov-branch --cov-report term-missing:skip-covered --cov=game tests/
     - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./coverage.xml
+      uses: AndreMiras/coveralls-python-action@develop
