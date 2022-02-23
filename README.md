@@ -1,4 +1,6 @@
 # wordmind
+[![Coverage Status](https://coveralls.io/repos/github/swilcox/wordmind/badge.svg?branch=main)](https://coveralls.io/github/swilcox/wordmind?branch=main)
+
 a silly wordle knockoff for the command-line
 
 ## Prerequisites
