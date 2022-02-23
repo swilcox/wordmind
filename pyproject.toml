@@ -12,11 +12,15 @@ license = {text = "MIT"}
 [project.urls]
 homepage = "https://github.com/swilcox/wordmind"
 
+[project.optional-dependencies]
 [tool]
 [tool.pdm]
 [tool.pdm.dev-dependencies]
 dev = [
-    "black","pytest","ipython"
+    "black",
+    "pytest",
+    "ipython",
+    "pytest-cov==3.0.0",
 ]
 
 [build-system]

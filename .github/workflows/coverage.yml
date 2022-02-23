@@ -1,14 +1,13 @@
-name: ci_test
+name: code_coverage
 on: [push, pull_request]
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-        python-version: ["3.9", "3.10"]
       fail-fast: false
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+      matrix:
+          os: [ ubuntu-latest ]
+          python-version: ["3.10"]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -20,7 +19,6 @@ jobs:
         pip install pdm
     - name: Install project dependencies
       run: pdm install
-    - name: Test with pytest
+    - name: Report test coverage
       run: |
-        pdm run pytest
-
+        pdm run pytest --cov-branch --cov-report term-missing:skip-covered --cov=game tests/
