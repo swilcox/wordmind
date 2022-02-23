@@ -1,5 +1,5 @@
 # wordmind
-[![Coverage Status](https://coveralls.io/repos/github/swilcox/wordmind/badge.svg?branch=main)](https://coveralls.io/github/swilcox/wordmind?branch=main)
+[![codecov](https://codecov.io/gh/swilcox/wordmind/branch/main/graph/badge.svg?token=K2K5CI21NN)](https://codecov.io/gh/swilcox/wordmind)
 
 a silly wordle knockoff for the command-line
 
