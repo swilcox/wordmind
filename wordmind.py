@@ -1,4 +1,5 @@
 import argparse
+from enum import IntEnum
 import os
 import string
 import time
@@ -11,20 +12,33 @@ from game.guesser import Guesser
 
 
 def _read_in_file(file_name) -> list[str]:
-    with open(os.path.join('data', file_name), "rt") as f:
+    with open(os.path.join("data", file_name), "rt") as f:
         return [line.strip() for line in f.readlines()]
 
 
-HINT_MAP = {
-    HintType.MATCH: Fore.BLACK + Back.GREEN,
-    HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX + Back.BLACK,
-    HintType.WRONG_SPOT: Fore.BLACK + Back.YELLOW,
-}
+class ColorMode(IntEnum):
+    NORMAL = 0
+    COLOR_BLIND = 1
+
+
+HINT_MAP = [
+    {
+        HintType.MATCH: Fore.BLACK + Back.GREEN,
+        HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX + Back.BLACK,
+        HintType.WRONG_SPOT: Fore.BLACK + Back.YELLOW,
+    },
+    {
+        HintType.MATCH: Fore.BLACK + Back.RED,
+        HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX + Back.BLACK,
+        HintType.WRONG_SPOT: Fore.BLACK + Back.LIGHTBLUE_EX,
+    },
+]
 
 
 class GameScreen:
     def __init__(self, term: Terminal, game: Game, color_blind=False, speed=500):
         self.term = term
+        self.color_mode = ColorMode.COLOR_BLIND if color_blind else ColorMode.NORMAL
         self.color_blind = color_blind
         self.game = game
         self.speed = speed
@@ -92,7 +106,11 @@ class GameScreen:
         for i in range(self.game.word_length):
             with self.term.location((i * 1) + 0, 1 + (len(self.game.hints) * 1)):
                 time.sleep(self.speed / 1000)
-                print(HINT_MAP[hint[i].hint_type] + hint[i].letter + Style.RESET_ALL)
+                print(
+                    HINT_MAP[self.color_mode][hint[i].hint_type]
+                    + hint[i].letter
+                    + Style.RESET_ALL
+                )
 
 
 def main():
@@ -133,20 +151,18 @@ def main():
     )
     parser.add_argument(
         "--color_blind",
-        dest="color_blind",
-        default=False,
+        action="store_true",
         help="increase contrast for colors",
     )
     parser.add_argument(
         "--hard",
         dest="hard_mode",
-        default=False,
+        action="store_true",
         help="hard mode - strict guess enforcement",
     )
     parser.add_argument(
         "--auto",
-        default=False,
-        dest="auto",
+        action="store_true",
     )
     args = parser.parse_args()
     word_list = _read_in_file(args.word_file)
@@ -163,7 +179,7 @@ def main():
         guesser = Guesser(game, word_list)
     term = Terminal()
     with term.fullscreen(), term.hidden_cursor():
-        screen = GameScreen(term, game, speed=args.speed)
+        screen = GameScreen(term, game, speed=args.speed, color_blind=args.color_blind)
         screen.display_title()
         screen.display_guesses()
 

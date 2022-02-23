@@ -1,7 +1,5 @@
-from multiprocessing.connection import answer_challenge
 import random
 import re
-import sys
 
 
 from game.engine import Game, GameStatus, HintType

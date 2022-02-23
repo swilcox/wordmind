@@ -17,7 +17,7 @@ pdm run python3 wordmind.py
 ### to have the computer play for a particular answer word and speed up animations
 
 ```sh
-pdm run python3 wordmind.py --auto true --solution drink --speed 50
+pdm run python3 wordmind.py --auto --solution drink --speed 50
 ```
 
 ## To Run Tests
