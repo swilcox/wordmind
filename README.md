@@ -30,7 +30,6 @@ pdm run pytest
 
 ## Things to do still
 
-- coverage for tests
 - greater coverage of tests
 - tests for guesser and cli
 - possibly remove colorama to just use blessed
