@@ -46,7 +46,7 @@ def test_game_hints():
             HintLetter("n", HintType.MATCH),
             HintLetter("t", HintType.WRONG_SPOT),
         ]
-    )    
+    )
     assert game.submit_guess("point") == True
     assert len(game._guesses) == 2
     assert expected_point_hint == game._hints[1]
@@ -58,7 +58,7 @@ def test_game_hints():
             HintLetter("i", HintType.NOT_IN_WORD),
             HintLetter("n", HintType.WRONG_SPOT),
         ]
-    )    
+    )
     assert game.submit_guess("thiin") == True
     assert len(game._guesses) == 3
     assert expected_thiin_hint == game._hints[2]
@@ -115,4 +115,3 @@ def test_guesses_and_hints():
     assert game.submit_guess("point") == True
     assert game.guesses == ["point"]
     assert len(game.hints) == 1
-
