@@ -131,3 +131,6 @@ dmypy.json
 
 # PyCharm env settings
 .idea/
+
+# Ignore vscode settings
+.vscode/
