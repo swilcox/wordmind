@@ -158,11 +158,17 @@ def main():
         "--hard",
         dest="hard_mode",
         action="store_true",
-        help="hard mode - strict guess enforcement",
+        help="hard mode - strict guess enforcement (not implemented yet)",
     )
     parser.add_argument(
         "--auto",
         action="store_true",
+        help="have the automated guesser play instead",
+    )
+    parser.add_argument(
+        "--starting_word",
+        default="",
+        help="first guess if `--auto` mode is enabled",
     )
     args = parser.parse_args()
     word_list = _read_in_file(args.word_file)
@@ -176,7 +182,7 @@ def main():
         word=args.solution,
     )
     if args.auto:
-        guesser = Guesser(game, word_list)
+        guesser = Guesser(game, word_list, starting_word=args.starting_word)
     term = Terminal()
     with term.fullscreen(), term.hidden_cursor():
         screen = GameScreen(term, game, speed=args.speed, color_blind=args.color_blind)
