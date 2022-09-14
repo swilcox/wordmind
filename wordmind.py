@@ -34,6 +34,19 @@ HINT_MAP = [
     },
 ]
 
+CHAR_COLOR_MAP = [
+    {
+        HintType.MATCH: Fore.GREEN,
+        HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX,
+        HintType.WRONG_SPOT: Fore.YELLOW,
+    },
+    {
+        HintType.MATCH: Fore.RED,
+        HintType.NOT_IN_WORD: Fore.LIGHTBLACK_EX,
+        HintType.WRONG_SPOT: Fore.LIGHTBLUE_EX,
+    },
+]
+
 
 class GameScreen:
     def __init__(self, term: Terminal, game: Game, color_blind=False, speed=500):
@@ -65,11 +78,11 @@ class GameScreen:
                 print(" " * y, end="")
                 for c in row:
                     if c in self.game.eliminated_letters:
-                        print(Fore.LIGHTBLACK_EX + c + " " + Style.RESET_ALL, end="")
+                        print(CHAR_COLOR_MAP[self.color_mode][HintType.NOT_IN_WORD] + c + " " + Style.RESET_ALL, end="")
                     elif c in self.game.wrong_place_letters:
-                        print(Fore.YELLOW + c + " " + Style.RESET_ALL, end="")
+                        print(CHAR_COLOR_MAP[self.color_mode][HintType.WRONG_SPOT] + c + " " + Style.RESET_ALL, end="")
                     elif c in self.game.match_letters:
-                        print(Fore.GREEN + c + " " + Style.RESET_ALL, end="")
+                        print(CHAR_COLOR_MAP[self.color_mode][HintType.MATCH] + c + " " + Style.RESET_ALL, end="")
                     else:
                         print(c + " ", end="")
                 print()
