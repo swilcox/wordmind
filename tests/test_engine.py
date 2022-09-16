@@ -115,3 +115,14 @@ def test_guesses_and_hints():
     assert game.submit_guess("point") == True
     assert game.guesses == ["point"]
     assert len(game.hints) == 1
+
+
+def test_solution_list():
+    random.seed(1)
+    solution_list = ["think", "point", "sleep"]
+    word_list = solution_list + ["break"]
+    game = Game(word_list, solution_list=solution_list)
+    assert game._word == "think"
+    assert game.submit_guess("point") == True
+    assert game.guesses == ["point"]
+    assert len(game.hints) == 1
