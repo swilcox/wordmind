@@ -78,11 +78,29 @@ class GameScreen:
                 print(" " * y, end="")
                 for c in row:
                     if c in self.game.eliminated_letters:
-                        print(CHAR_COLOR_MAP[self.color_mode][HintType.NOT_IN_WORD] + c + " " + Style.RESET_ALL, end="")
+                        print(
+                            CHAR_COLOR_MAP[self.color_mode][HintType.NOT_IN_WORD]
+                            + c
+                            + " "
+                            + Style.RESET_ALL,
+                            end="",
+                        )
                     elif c in self.game.wrong_place_letters:
-                        print(CHAR_COLOR_MAP[self.color_mode][HintType.WRONG_SPOT] + c + " " + Style.RESET_ALL, end="")
+                        print(
+                            CHAR_COLOR_MAP[self.color_mode][HintType.WRONG_SPOT]
+                            + c
+                            + " "
+                            + Style.RESET_ALL,
+                            end="",
+                        )
                     elif c in self.game.match_letters:
-                        print(CHAR_COLOR_MAP[self.color_mode][HintType.MATCH] + c + " " + Style.RESET_ALL, end="")
+                        print(
+                            CHAR_COLOR_MAP[self.color_mode][HintType.MATCH]
+                            + c
+                            + " "
+                            + Style.RESET_ALL,
+                            end="",
+                        )
                     else:
                         print(c + " ", end="")
                 print()

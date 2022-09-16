@@ -37,14 +37,18 @@ def test_guess_logic():
         second_guess = guesser.compute_guess()
         assert second_guess == "plink"
 
+
 def test_guess_cache():
     word_list = ["blink", "plink", "think", "thiin", "thinp"]
     my_cache = {}
     game = Game(word_list, word="plink")
     random.seed(1)
-    guesser = Guesser(game=game, word_list=word_list, starting_word="thinp", search_cache=my_cache)
+    guesser = Guesser(
+        game=game, word_list=word_list, starting_word="thinp", search_cache=my_cache
+    )
     guesser.play()
-    assert my_cache == {'[^ht][^ht]in[^htp]': ['blink', 'plink']}
+    assert my_cache == {"[^ht][^ht]in[^htp]": ["blink", "plink"]}
+
 
 def test_play_logic():
     word_list = ["blink", "plink", "think", "thiin", "thinp"]
