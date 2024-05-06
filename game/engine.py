@@ -41,7 +41,7 @@ class Game:
         max_guesses=6,
         word_length=5,
         hard_mode=False,
-        word=""
+        word="",
     ):
         self.word_length = word_length
         self.max_guesses = max_guesses
