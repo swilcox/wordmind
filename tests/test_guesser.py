@@ -1,5 +1,5 @@
 import random
-from game.engine import Game, GameStatus, Hint, HintLetter, HintType
+from game.engine import Game, GameStatus
 from game.guesser import Guesser
 
 

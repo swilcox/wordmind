@@ -37,7 +37,7 @@ class Guesser:
                 if len(exclude_letters + addtl_excluded):
                     regex += f"[^{exclude_letters+addtl_excluded}]"
                 else:
-                    regex += f"[a-z]"
+                    regex += "[a-z]"
                 if hl.hint_type == HintType.WRONG_SPOT:
                     must_contain.append(hl.letter)
         try:
@@ -57,7 +57,10 @@ class Guesser:
         possible_words = [
             pw
             for pw in tmp_words
-            if all(must_contain.count(l) <= pw.count(l) for l in must_contain)
+            if all(
+                must_contain.count(letter) <= pw.count(letter)
+                for letter in must_contain
+            )
         ]
         return random.choice(possible_words)
 

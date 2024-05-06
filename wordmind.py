@@ -7,7 +7,7 @@ import time
 from colorama import Fore, Back, Style
 from blessed import Terminal
 
-from game.engine import Game, GameStatus, HintType, Hint
+from game.engine import Game, GameStatus, HintType
 from game.guesser import Guesser
 
 
