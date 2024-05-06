@@ -4,7 +4,7 @@ version = "0.2"
 description = "a silly wordle knockoff for the command-line"
 authors = [{ name = "Steven Wilcox", email = "steven@wilcoxzone.com" }]
 dependencies = ["colorama", "blessed"]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 
 [project.urls]
