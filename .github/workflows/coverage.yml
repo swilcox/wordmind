@@ -8,7 +8,7 @@ jobs:
       - uses: sksat/setup-rye@v0.8.0
       - name: install deps
         run: |
-          rye sync --dev
+          rye sync
       - name: Report test coverage
         run: |
           rye run pytest --cov-branch --cov-report xml --cov=game tests/ 
