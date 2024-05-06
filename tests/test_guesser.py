@@ -1,5 +1,5 @@
 import random
-from game.engine import Game, GameStatus, Hint, HintLetter, HintType
+from game.engine import Game, GameStatus
 from game.guesser import Guesser
 
 
@@ -48,6 +48,13 @@ def test_guess_cache():
     )
     guesser.play()
     assert my_cache == {"[^ht][^ht]in[^htp]": ["blink", "plink"]}
+    # replay so that the cache gets used
+    game = Game(word_list, word="plink")
+    random.seed(1)
+    guesser = Guesser(
+        game=game, word_list=word_list, starting_word="thinp", search_cache=my_cache
+    )
+    guesser.play()
 
 
 def test_play_logic():

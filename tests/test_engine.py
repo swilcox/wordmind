@@ -10,7 +10,7 @@ def test_game_init():
     assert game._hints == []
     assert game._word_list == ["point"]
     assert game.max_guesses == 6
-    assert game.hard_mode == False
+    assert not game.hard_mode
     assert game.word_length == 5
 
 
@@ -21,10 +21,10 @@ def test_game_hints():
     assert game._word == "think"
 
     # doesn't allow a word that's not in the word list
-    assert game.submit_guess("blank") == False
+    assert not game.submit_guess("blank")
 
     # allows a word that is the word list
-    assert game.submit_guess("sleep") == True
+    assert game.submit_guess("sleep")
 
     assert len(game._guesses) == 1
     assert len(game._hints) == 1
@@ -47,7 +47,7 @@ def test_game_hints():
             HintLetter("t", HintType.WRONG_SPOT),
         ]
     )
-    assert game.submit_guess("point") == True
+    assert game.submit_guess("point")
     assert len(game._guesses) == 2
     assert expected_point_hint == game._hints[1]
     expected_thiin_hint = Hint(
@@ -59,7 +59,7 @@ def test_game_hints():
             HintLetter("n", HintType.WRONG_SPOT),
         ]
     )
-    assert game.submit_guess("thiin") == True
+    assert game.submit_guess("thiin")
     assert len(game._guesses) == 3
     assert expected_thiin_hint == game._hints[2]
     assert game.eliminated_letters == ["e", "l", "o", "p", "s"]
@@ -70,16 +70,16 @@ def test_game_status_changes_loss():
     word_list = ["think", "point", "sleep"]
     game = Game(word_list)
     assert game._word == "think"
-    assert game.submit_guess("sleep") == True
-    assert game.submit_guess("sleep") == True
-    assert game.submit_guess("sleep") == True
-    assert game.submit_guess("sleep") == True
-    assert game.submit_guess("sleep") == True
+    assert game.submit_guess("sleep")
+    assert game.submit_guess("sleep")
+    assert game.submit_guess("sleep")
+    assert game.submit_guess("sleep")
+    assert game.submit_guess("sleep")
     assert game.status == GameStatus.IN_PROGRESS
-    assert game.submit_guess("sleep") == True
-    assert game.submit_guess("sleep") == False
+    assert game.submit_guess("sleep")
+    assert not game.submit_guess("sleep")
     assert game.status == GameStatus.COMPLETE
-    assert game.won == False
+    assert not game.won
 
 
 def test_game_status_changes_win():
@@ -87,13 +87,13 @@ def test_game_status_changes_win():
     word_list = ["think", "point", "sleep"]
     game = Game(word_list)
     assert game._word == "think"
-    assert game.won == False
-    assert game.submit_guess("point") == True
+    assert not game.won
+    assert game.submit_guess("point")
     assert game.status == GameStatus.IN_PROGRESS
-    assert game.submit_guess("think") == True
+    assert game.submit_guess("think")
     assert game.status == GameStatus.COMPLETE
-    assert game.won == True
-    assert game.submit_guess("think") == False
+    assert game.won
+    assert not game.submit_guess("think")
 
 
 def test_game_letter_status():
@@ -101,7 +101,7 @@ def test_game_letter_status():
     word_list = ["think", "point", "sleep"]
     game = Game(word_list)
     assert game._word == "think"
-    assert game.submit_guess("point") == True
+    assert game.submit_guess("point")
     assert game.eliminated_letters == ["o", "p"]
     assert game.match_letters == ["i", "n"]
     assert game.wrong_place_letters == ["t"]
@@ -112,7 +112,7 @@ def test_guesses_and_hints():
     word_list = ["think", "point", "sleep"]
     game = Game(word_list)
     assert game._word == "think"
-    assert game.submit_guess("point") == True
+    assert game.submit_guess("point")
     assert game.guesses == ["point"]
     assert len(game.hints) == 1
 
@@ -123,6 +123,6 @@ def test_solution_list():
     word_list = solution_list + ["break"]
     game = Game(word_list, solution_list=solution_list)
     assert game._word == "think"
-    assert game.submit_guess("point") == True
+    assert game.submit_guess("point")
     assert game.guesses == ["point"]
     assert len(game.hints) == 1
