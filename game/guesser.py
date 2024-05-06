@@ -1,7 +1,6 @@
 import random
 import re
 
-
 from game.engine import Game, GameStatus, HintType
 
 
@@ -11,15 +10,13 @@ class Guesser:
         game: Game,
         word_list: list[str],
         starting_word: str = "",
-        search_cache: dict = None,
+        search_cache: dict[str, list[str]] | None = None,
     ):
         self.word_list = word_list
         self.starting_word = (
             starting_word if starting_word else random.choice(word_list)
         )
-        self._use_cache = True if search_cache is not None else False
         self.cache = search_cache
-
         self.game = game
 
     def compute_guess(self) -> str:
@@ -48,7 +45,7 @@ class Guesser:
         except Exception as ex:
             print("offending regex: " + regex)
             raise ex
-        if self._use_cache:
+        if self.cache is not None:
             tmp_words = self.cache.get(regex, None) or list(
                 filter(r.match, self.word_list)
             )
