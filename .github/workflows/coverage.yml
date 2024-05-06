@@ -1,4 +1,4 @@
-name: run pytest
+name: coverage
 on: pull_request
 
 jobs:
@@ -14,4 +14,6 @@ jobs:
         run: |
           rye run pytest --cov-branch --cov-report xml --cov=game tests/ 
       - name: Upload to CodeCov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
