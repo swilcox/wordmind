@@ -1,7 +1,7 @@
 import random
 import re
 
-from game.engine import Game, GameStatus, HintType
+from .engine import Game, GameStatus, HintType
 
 
 class Guesser:

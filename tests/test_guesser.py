@@ -1,6 +1,6 @@
 import random
-from game.engine import Game, GameStatus
-from game.guesser import Guesser
+from wordmind.game.engine import Game, GameStatus
+from wordmind.game.guesser import Guesser
 
 
 def test_basic_guesser():

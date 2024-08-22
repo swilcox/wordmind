@@ -4,11 +4,16 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2      
-      - uses: sksat/setup-rye@v0.8.0
+      - uses: actions/checkout@v4
+      - name: Set up uv
+        # Install latest uv version using the installer
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh 
+      - name: install python version
+        run: |
+          uv python install
       - name: install deps
         run: |
-          rye sync
+          uv sync
       - name: Report test coverage
         run: |
-          rye run pytest
+          uv run pytest
