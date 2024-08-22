@@ -1,5 +1,6 @@
 import argparse
 from enum import IntEnum
+from importlib.metadata import version
 import os
 import string
 import time
@@ -7,8 +8,8 @@ import time
 from colorama import Fore, Back, Style
 from blessed import Terminal
 
-from game.engine import Game, GameStatus, HintType
-from game.guesser import Guesser
+from .game.engine import Game, GameStatus, HintType
+from .game.guesser import Guesser
 
 
 def _read_in_file(file_name) -> list[str]:
@@ -201,6 +202,7 @@ def main():
         default="",
         help="first guess if `--auto` mode is enabled",
     )
+    parser.add_argument("--version", action="version", version=version("wordmind"))
     args = parser.parse_args()
     word_list = _read_in_file(args.word_file)
     answer_list = _read_in_file(args.answer_file)

@@ -4,27 +4,27 @@
 a silly wordle knockoff for the command-line
 
 ## Prerequisites
-* Install [rye](https://rye-up.com/) on your system.
-* From a command prompt in the project directory, type `rye sync`.
+* Install [uv](https://docs.astral.sh/uv/getting-started/installation/) on your system.
+* From a command prompt in the project directory, type `uv sync`.
 
 ## how to run
 
 ### to play normally with default options
 
 ```sh
-rye run python wordmind.py
+uv run wordmind
 ```
 
 ### to have the computer play for a particular answer word and speed up animations
 
 ```sh
-rye run python wordmind.py --auto --solution drink --speed 50
+uv run wordmind --auto --solution drink --speed 50
 ```
 
-## To Run Tests
+## To Run Tests (with Coverage)
 
 ```sh
-rye run pytest
+uv run pytest --cov
 ```
 
 ## Things to do still
