@@ -1,7 +1,7 @@
 [project]
 name = "wordmind"
 version = "0.3.0"
-description = "Add your description here"
+description = "A silly wordle cli knockoff"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["colorama>=0.4.6", "blessed>=1.20.0"]

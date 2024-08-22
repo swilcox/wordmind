@@ -1,5 +1,5 @@
 name: ci_test
-on: [push, pull_request]
+on: [pull_request]
 jobs:
   pytest:
     runs-on: ubuntu-latest
@@ -14,6 +14,6 @@ jobs:
       - name: install deps
         run: |
           uv sync
-      - name: Report test coverage
+      - name: Execute Tests
         run: |
           uv run pytest
